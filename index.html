@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VixenGPT Community</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Particle Background Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .background-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(60px);
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            background: rgba(20, 20, 23, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 28px;
+            padding: 60px 45px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Glossy effect on top */
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        /* Custom ChatGPT-style Logo */
+        .logo-wrapper {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 25px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.3));
+            animation: floatLogo 4s ease-in-out infinite;
+        }
+
+        .logo-svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: url(#gradient-logo);
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(56, 189, 248, 0.8);
+            filter: blur(25px);
+            border-radius: 50%;
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #ffffff, #a5f3fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .link-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 10px 30px -5px rgba(56, 189, 248, 0.15);
+        }
+
+        .link-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-right: 18px;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .link-card:hover .link-icon {
+            background: #38bdf8;
+            color: #000;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+
+        .link-content {
+            flex: 1;
+        }
+
+        .link-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #f1f5f9;
+        }
+
+        .link-desc {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 2px;
+        }
+
+        .link-arrow {
+            color: #475569;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .link-card:hover .link-arrow {
+            color: #38bdf8;
+            transform: translateX(4px);
+        }
+
+        .footer {
+            margin-top: 45px;
+            text-align: center;
+            color: #475569;
+            font-size: 0.8rem;
+        }
+
+        /* Animations */
+        @keyframes pulseGlow {
+            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .container { padding: 40px 25px; }
+            .title { font-size: 2.2rem; }
+            .logo-wrapper { width: 85px; height: 85px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+    <div class="background-glow"></div>
+
+    <div class="container">
+        <div class="header">
+            <!-- Custom SVG Logo (ChatGPT Style Hexagon) -->
+            <div class="logo-wrapper">
+                <div class="logo-glow"></div>
+                <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="gradient-logo" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#38bdf8;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#818cf8;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Hexagon Shape -->
+                    <path d="M50 5 L90 27.5 L90 72.5 L50 95 L10 72.5 L10 27.5 Z" />
+                    <!-- Inner Tech Lines -->
+                    <path d="M50 5 L50 50 L90 72.5" stroke-opacity="0.6" stroke-width="3" />
+                    <path d="M50 95 L50 50 L10 27.5" stroke-opacity="0.6" stroke-width="3" />
+                    <circle cx="50" cy="50" r="12" fill="rgba(56, 189, 248, 0.2)" stroke="none" />
+                </svg>
+            </div>
+            
+            <h1 class="title">VixenGPT</h1>
+            <p class="subtitle">Next Gen AI Interface</p>
+        </div>
+
+        <div class="links-container">
+            <!-- Link Telegram Channel -->
+            <a href="https://t.me/wormgpt19" target="_blank" class="link-card">
+                <div class="link-icon">
+                    <i class="fab fa-telegram"></i>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Saluran Telegram</div>
+                    <div class="link-desc">Update & Berita Terbaru</div>
+                </div>
+                <div class="link-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </a>
+            
+            <!-- Link Admin Telegram -->
+            <a href="https://t.me/mzyuyx" target="_blank" class="link-card">
+                <div class="link-icon">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Admin Utama</div>
+                    <div class="link-desc">Hubungi Admin Langsung</div>
+                </div>
+                <div class="link-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </a>
+            
+            <!-- Link TikTok -->
+            <a href="https://vm.tiktok.com/ZSHENcnsXBE2G-cmedH/" target="_blank" class="link-card">
+                <div class="link-icon">
+                    <i class="fab fa-tiktok"></i>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">TikTok Official</div>
+                    <div class="link-desc">Konten Video & Short</div>
+                </div>
+                <div class="link-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 VixenGPT Community. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        // Particle Animation for Background
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() * 1 - 0.5) * 0.5;
+                this.speedY = (Math.random() * 1 - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.01; // slowly fade out size
+                if (this.size <= 0.2) { // respawn
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2;
+                    this.opacity = Math.random() * 0.5;
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(56, 189, 248, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            for (let i = 0; i < 50; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        });
+    </script>
+</body>
+  </html>
