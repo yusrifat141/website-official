@@ -17,7 +17,7 @@
         }
 
         body {
-            background-color: #000000; /* Pure Black for sleekness */
+            background-color: #000000;
             color: #ffffff;
             min-height: 100vh;
             display: flex;
@@ -52,11 +52,10 @@
                         0 25px 50px -10px rgba(0, 0, 0, 0.8);
             position: relative;
             z-index: 10;
-            /* Decorative inner shadow for depth */
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
-        /* Top Accent Line (Subtle Silver/Red) */
+        /* Top Accent Line */
         .container::before {
             content: '';
             position: absolute;
@@ -70,13 +69,13 @@
 
         .header {
             text-align: center;
-            margin-bottom: 40px; /* Jarak didekatkan */
+            margin-bottom: 40px;
         }
 
         .logo-icon {
             width: 85px;
             height: 85px;
-            margin: 0 auto 20px; /* Jarak ke teks didekatkan */
+            margin: 0 auto 20px;
             background: #0f0f0f;
             border-radius: 20px;
             display: flex;
@@ -84,10 +83,13 @@
             justify-content: center;
             font-size: 35px;
             border: 1px solid rgba(255,255,255,0.1);
-            /* Silver/Red subtle glow */
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.05); 
             transition: all 0.3s ease;
             color: #e0e0e0;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUpFade 0.8s forwards 0.2s;
+            cursor: default;
         }
 
         .logo-icon:hover {
@@ -97,27 +99,37 @@
             color: #ffffff;
         }
 
+        .title-wrapper {
+            opacity: 0;
+            animation: slideUpFade 0.8s forwards 0.5s;
+            display: inline-block;
+        }
+
         .title {
             font-size: 2.8rem;
             font-weight: 800;
             letter-spacing: -0.5px;
-            color: #ffffff; /* Putih Bersih */
+            color: #ffffff;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            position: relative;
+            display: inline-block;
+            cursor: default;
         }
 
-        /* Highlight only 'GPT' slightly with silver, not yellow */
-        .title span {
-            background: linear-gradient(135deg, #ffffff, #a3a3a3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        @keyframes slideUpFade {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .links-container {
             display: flex;
             flex-direction: column;
-            gap: 14px; /* Jarak tombol didekatkan agar padat */
+            gap: 14px;
         }
 
+        /* Style untuk tombol */
         .link-card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -130,10 +142,18 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            /* Inner shadow for pressed look */
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+            cursor: pointer; /* Tampilkan tangan klik */
+            
+            opacity: 0;
+            animation: slideUpFade 0.8s forwards;
         }
 
+        .link-card:nth-child(1) { animation-delay: 0.8s; }
+        .link-card:nth-child(2) { animation-delay: 1.0s; }
+        .link-card:nth-child(3) { animation-delay: 1.2s; }
+
+        /* Saat Hover */
         .link-card:hover {
             background: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.2);
@@ -141,23 +161,47 @@
             box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
         }
 
-        /* Cool Wave Border Effect on Hover */
-        .link-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 14px;
-            padding: 1px; 
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent); 
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.3s;
+        /* Saat Klik Pertama (Aktif tapi bukan pindah halaman) */
+        .link-card.active-stage-1 {
+            background: rgba(220, 20, 60, 0.2); /* Merah Gelap */
+            border-color: #ff004c;
+            transform: scale(0.98);
+            box-shadow: 0 0 20px rgba(255, 0, 76, 0.3);
         }
 
-        .link-card:hover::before {
-            opacity: 1;
+        /* Teks Loading saat Stage 1 */
+        .status-text {
+            display: none;
+            font-family: monospace;
+            color: #ff004c;
+            font-size: 0.9rem;
+            margin-right: 10px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Saat Klik Kedua (Siap buka) */
+        .link-card.active-stage-2 {
+            background: #ffffff;
+            border-color: #ffffff;
+            color: #000000;
+            transform: scale(0.95);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+        
+        .link-card.active-stage-2 .link-title,
+        .link-card.active-stage-2 .link-desc,
+        .link-card.active-stage-2 .link-arrow {
+            color: #000000;
+        }
+
+        .link-card.active-stage-2 .link-icon {
+            background: #000000;
+            color: #ffffff;
         }
 
         .link-icon {
@@ -173,11 +217,6 @@
             margin-right: 16px;
             transition: all 0.3s;
             flex-shrink: 0;
-        }
-
-        .link-card:hover .link-icon {
-            background: #ffffff;
-            color: #000000; /* Inverted Icon */
         }
 
         .link-content {
@@ -196,19 +235,10 @@
             font-weight: 400;
         }
 
-        .link-card:hover .link-desc {
-            color: #999;
-        }
-
         .link-arrow {
             color: #444;
             font-size: 14px;
             transition: all 0.3s;
-        }
-
-        .link-card:hover .link-arrow {
-            color: #fff;
-            transform: translateX(3px);
         }
 
         .footer {
@@ -218,6 +248,8 @@
             font-size: 0.75rem;
             border-top: 1px solid rgba(255,255,255,0.05);
             padding-top: 20px;
+            opacity: 0;
+            animation: slideUpFade 0.8s forwards 1.4s;
         }
 
         @media (max-width: 600px) {
@@ -237,12 +269,18 @@
                 <i class="fas fa-robot"></i>
             </div>
             
-            <h1 class="title">Vixen<span>GPT</span></h1>
+            <div class="title-wrapper">
+                <h1 class="title" id="glitchText">VixenGPT</h1>
+            </div>
         </div>
 
         <div class="links-container">
             <!-- Link Telegram Channel -->
-            <a href="https://t.me/wormgpt19" target="_blank" class="link-card">
+            <!-- onclick="handleClick(event, 'https://t.me/wormgpt19')" -->
+            <div class="link-card" onclick="handleClick(event, 'https://t.me/wormgpt19')">
+                <!-- Status Loading -->
+                <div class="status-text" id="status-1">[ENCRYPTING...]</div>
+                
                 <div class="link-icon">
                     <i class="fab fa-telegram"></i>
                 </div>
@@ -253,10 +291,12 @@
                 <div class="link-arrow">
                     <i class="fas fa-chevron-right"></i>
                 </div>
-            </a>
+            </div>
             
             <!-- Link Admin Telegram -->
-            <a href="https://t.me/mzyuyx" target="_blank" class="link-card">
+            <div class="link-card" onclick="handleClick(event, 'https://t.me/mzyuyx')">
+                <div class="status-text" id="status-2">[VERIFYING...]</div>
+                
                 <div class="link-icon">
                     <i class="fas fa-user-astronaut"></i>
                 </div>
@@ -267,10 +307,12 @@
                 <div class="link-arrow">
                     <i class="fas fa-chevron-right"></i>
                 </div>
-            </a>
+            </div>
             
             <!-- Link TikTok -->
-            <a href="https://vm.tiktok.com/ZSHENcnsXBE2G-cmedH/" target="_blank" class="link-card">
+            <div class="link-card" onclick="handleClick(event, 'https://vm.tiktok.com/ZSHENcnsXBE2G-cmedH/')">
+                <div class="status-text" id="status-3">[BYPASSING...]</div>
+                
                 <div class="link-icon">
                     <i class="fab fa-tiktok"></i>
                 </div>
@@ -281,7 +323,7 @@
                 <div class="link-arrow">
                     <i class="fas fa-chevron-right"></i>
                 </div>
-            </a>
+            </div>
         </div>
 
         <div class="footer">
@@ -289,5 +331,104 @@
             <p class="copyright">© 2025 VixenGPT Community. All rights reserved.</p>
         </div>
     </div>
+
+    <!-- Script untuk Logika 2x Klik dan Audio Glitch -->
+    <script>
+        // --- LOGIKA KLIK 2X ---
+        function handleClick(event, url) {
+            event.preventDefault(); // Mencegah link langsung terbuka
+            const card = event.currentTarget;
+            const statusText = card.querySelector('.status-text');
+
+            // Jika tombol belum pernah diklik (Stage 0 -> 1)
+            if (!card.classList.contains('active-stage-1')) {
+                card.classList.add('active-stage-1');
+                if(statusText) statusText.style.display = 'block';
+                
+                // Mainkan suara beep teknikal (opsional, menggunakan oscillator)
+                playTechSound();
+            } 
+            // Jika tombol sudah diklik sekali (Stage 1 -> 2)
+            else if (!card.classList.contains('active-stage-2')) {
+                card.classList.remove('active-stage-1');
+                card.classList.add('active-stage-2');
+                if(statusText) statusText.textContent = "[ACCESS GRANTED]";
+                statusText.style.color = "#ffffff";
+                
+                // Buka link setelah delay sebentar agar animasi terlihat
+                setTimeout(() => {
+                    window.open(url, '_blank');
+                }, 300);
+            }
+            // Jika sudah di stage 2 (sudah pernah klik 2x), langsung buka aja
+            else {
+                window.open(url, '_blank');
+            }
+        }
+
+        function playTechSound() {
+            // Suara 'beep' pendek menggunakan Web Audio API
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // --- AUDIO GLITCH PADA TITLE ---
+        const glitchText = document.getElementById('glitchText');
+        let audioCtx;
+        let isHovering = false;
+        let glitchInterval;
+
+        function playGlitchSound() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const bufferSize = audioCtx.sampleRate * 0.1;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.value = 0.1;
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 1000;
+
+            noise.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            noise.start();
+        }
+
+        glitchText.addEventListener('mouseenter', () => {
+            isHovering = true;
+            glitchInterval = setInterval(() => {
+                playGlitchSound();
+            }, 250);
+        });
+
+        glitchText.addEventListener('mouseleave', () => {
+            isHovering = false;
+            clearInterval(glitchInterval);
+        });
+    </script>
 </body>
 </html>
