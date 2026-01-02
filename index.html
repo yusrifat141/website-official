@@ -72,6 +72,7 @@
             margin-bottom: 40px;
         }
 
+        /* --- ENTRANCE ANIMATION --- */
         .logo-icon {
             width: 85px;
             height: 85px;
@@ -86,10 +87,11 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.05); 
             transition: all 0.3s ease;
             color: #e0e0e0;
+            
+            /* Mulai dari posisi di bawah dan transparan */
             opacity: 0;
             transform: translateY(30px);
             animation: slideUpFade 0.8s forwards 0.2s;
-            cursor: default;
         }
 
         .logo-icon:hover {
@@ -116,6 +118,7 @@
             cursor: default;
         }
 
+        /* Animation Keyframes */
         @keyframes slideUpFade {
             to {
                 opacity: 1;
@@ -129,7 +132,6 @@
             gap: 14px;
         }
 
-        /* Style untuk tombol */
         .link-card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -143,65 +145,49 @@
             position: relative;
             overflow: hidden;
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
-            cursor: pointer; /* Tampilkan tangan klik */
             
+            /* Animasi masuk tombol satu per satu */
             opacity: 0;
             animation: slideUpFade 0.8s forwards;
+            cursor: pointer; /* Menunjukkan tombol bisa diklik */
         }
 
+        /* Delay animasi untuk tiap tombol */
         .link-card:nth-child(1) { animation-delay: 0.8s; }
         .link-card:nth-child(2) { animation-delay: 1.0s; }
         .link-card:nth-child(3) { animation-delay: 1.2s; }
 
-        /* Saat Hover */
+        /* HOVER STATE */
         .link-card:hover {
             background: rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+            transform: translateY(-2px); /* Naik sedikit saat hover */
             box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
         }
 
-        /* Saat Klik Pertama (Aktif tapi bukan pindah halaman) */
-        .link-card.active-stage-1 {
-            background: rgba(220, 20, 60, 0.2); /* Merah Gelap */
-            border-color: #ff004c;
-            transform: scale(0.98);
-            box-shadow: 0 0 20px rgba(255, 0, 76, 0.3);
-        }
-
-        /* Teks Loading saat Stage 1 */
-        .status-text {
-            display: none;
-            font-family: monospace;
-            color: #ff004c;
-            font-size: 0.9rem;
-            margin-right: 10px;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* Saat Klik Kedua (Siap buka) */
-        .link-card.active-stage-2 {
-            background: #ffffff;
+        /* ACTIVE / CLICK STATE (Animasi Tekan) */
+        .link-card:active {
+            transform: translateY(1px) scale(0.98); /* Turun sedikit dan mengecil saat ditekan */
+            background: rgba(255, 255, 255, 0.1);
             border-color: #ffffff;
-            color: #000000;
-            transform: scale(0.95);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
-        }
-        
-        .link-card.active-stage-2 .link-title,
-        .link-card.active-stage-2 .link-desc,
-        .link-card.active-stage-2 .link-arrow {
-            color: #000000;
         }
 
-        .link-card.active-stage-2 .link-icon {
-            background: #000000;
-            color: #ffffff;
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 14px;
+            padding: 1px; 
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent); 
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .link-card:hover::before {
+            opacity: 1;
         }
 
         .link-icon {
@@ -217,6 +203,11 @@
             margin-right: 16px;
             transition: all 0.3s;
             flex-shrink: 0;
+        }
+
+        .link-card:hover .link-icon {
+            background: #ffffff;
+            color: #000000;
         }
 
         .link-content {
@@ -235,10 +226,19 @@
             font-weight: 400;
         }
 
+        .link-card:hover .link-desc {
+            color: #999;
+        }
+
         .link-arrow {
             color: #444;
             font-size: 14px;
             transition: all 0.3s;
+        }
+
+        .link-card:hover .link-arrow {
+            color: #fff;
+            transform: translateX(3px);
         }
 
         .footer {
@@ -276,11 +276,7 @@
 
         <div class="links-container">
             <!-- Link Telegram Channel -->
-            <!-- onclick="handleClick(event, 'https://t.me/wormgpt19')" -->
-            <div class="link-card" onclick="handleClick(event, 'https://t.me/wormgpt19')">
-                <!-- Status Loading -->
-                <div class="status-text" id="status-1">[ENCRYPTING...]</div>
-                
+            <a href="https://t.me/wormgpt19" target="_blank" class="link-card">
                 <div class="link-icon">
                     <i class="fab fa-telegram"></i>
                 </div>
@@ -291,12 +287,10 @@
                 <div class="link-arrow">
                     <i class="fas fa-chevron-right"></i>
                 </div>
-            </div>
+            </a>
             
             <!-- Link Admin Telegram -->
-            <div class="link-card" onclick="handleClick(event, 'https://t.me/mzyuyx')">
-                <div class="status-text" id="status-2">[VERIFYING...]</div>
-                
+            <a href="https://t.me/mzyuyx" target="_blank" class="link-card">
                 <div class="link-icon">
                     <i class="fas fa-user-astronaut"></i>
                 </div>
@@ -307,12 +301,10 @@
                 <div class="link-arrow">
                     <i class="fas fa-chevron-right"></i>
                 </div>
-            </div>
+            </a>
             
             <!-- Link TikTok -->
-            <div class="link-card" onclick="handleClick(event, 'https://vm.tiktok.com/ZSHENcnsXBE2G-cmedH/')">
-                <div class="status-text" id="status-3">[BYPASSING...]</div>
-                
+            <a href="https://vm.tiktok.com/ZSHENcnsXBE2G-cmedH/" target="_blank" class="link-card">
                 <div class="link-icon">
                     <i class="fab fa-tiktok"></i>
                 </div>
@@ -323,7 +315,7 @@
                 <div class="link-arrow">
                     <i class="fas fa-chevron-right"></i>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="footer">
@@ -332,82 +324,37 @@
         </div>
     </div>
 
-    <!-- Script untuk Logika 2x Klik dan Audio Glitch -->
+    <!-- Script untuk Efek Suara Glitch -->
     <script>
-        // --- LOGIKA KLIK 2X ---
-        function handleClick(event, url) {
-            event.preventDefault(); // Mencegah link langsung terbuka
-            const card = event.currentTarget;
-            const statusText = card.querySelector('.status-text');
-
-            // Jika tombol belum pernah diklik (Stage 0 -> 1)
-            if (!card.classList.contains('active-stage-1')) {
-                card.classList.add('active-stage-1');
-                if(statusText) statusText.style.display = 'block';
-                
-                // Mainkan suara beep teknikal (opsional, menggunakan oscillator)
-                playTechSound();
-            } 
-            // Jika tombol sudah diklik sekali (Stage 1 -> 2)
-            else if (!card.classList.contains('active-stage-2')) {
-                card.classList.remove('active-stage-1');
-                card.classList.add('active-stage-2');
-                if(statusText) statusText.textContent = "[ACCESS GRANTED]";
-                statusText.style.color = "#ffffff";
-                
-                // Buka link setelah delay sebentar agar animasi terlihat
-                setTimeout(() => {
-                    window.open(url, '_blank');
-                }, 300);
-            }
-            // Jika sudah di stage 2 (sudah pernah klik 2x), langsung buka aja
-            else {
-                window.open(url, '_blank');
-            }
-        }
-
-        function playTechSound() {
-            // Suara 'beep' pendek menggunakan Web Audio API
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-
-            oscillator.type = 'square';
-            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
-            
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.1);
-        }
-
-        // --- AUDIO GLITCH PADA TITLE ---
+        // Audio Context Setup
         const glitchText = document.getElementById('glitchText');
         let audioCtx;
         let isHovering = false;
         let glitchInterval;
 
+        // Fungsi membuat suara Static Noise
         function playGlitchSound() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-            const bufferSize = audioCtx.sampleRate * 0.1;
+
+            const bufferSize = audioCtx.sampleRate * 0.1; // 0.1 detik suara
             const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             const data = buffer.getChannelData(0);
 
+            // Generate random white noise
             for (let i = 0; i < bufferSize; i++) {
                 data[i] = Math.random() * 2 - 1;
             }
 
             const noise = audioCtx.createBufferSource();
             noise.buffer = buffer;
+            
+            // Gain node untuk mengatur volume
             const gainNode = audioCtx.createGain();
-            gainNode.gain.value = 0.1;
+            gainNode.gain.value = 0.1; // Volume rendah agar tidak mengejutkan
+            
+            // Filter agar suaranya agak "kasar" seperti radio rusak
             const filter = audioCtx.createBiquadFilter();
             filter.type = 'lowpass';
             filter.frequency.value = 1000;
@@ -415,11 +362,14 @@
             noise.connect(filter);
             filter.connect(gainNode);
             gainNode.connect(audioCtx.destination);
+            
             noise.start();
         }
 
+        // Event Listener untuk Mouse Hover
         glitchText.addEventListener('mouseenter', () => {
             isHovering = true;
+            // Mainkan suara setiap 200ms selama mouse di atas teks
             glitchInterval = setInterval(() => {
                 playGlitchSound();
             }, 250);
